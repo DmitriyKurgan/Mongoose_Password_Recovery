@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "blogs_platform_mongoose_pass_recovery",
+  "name": "Mongoose",
   "builds": [
     { "src": "src/index.ts", "use": "@vercel/node" }
   ],
