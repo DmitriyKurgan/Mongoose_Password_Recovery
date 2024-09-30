@@ -1,19 +1,19 @@
 import {MongoRefreshTokenType} from "../utils/types";
-import {refreshTokensBlacklistCollection} from "./db";
+import {TokensModel} from "./db";
 
 export const blacklistedTokensRepository = {
     // Create new blacklisted token
     async createNewToken(
         newToken: MongoRefreshTokenType
     ): Promise<MongoRefreshTokenType> {
-        await refreshTokensBlacklistCollection.insertOne(newToken);
+        await TokensModel.create(newToken);
         console.log('newToken: ', newToken)
         return newToken;
     },
 
     // Delete all blacklisted tokens
     async deleteAll(): Promise<boolean> {
-        await refreshTokensBlacklistCollection.deleteMany({});
-        return (await refreshTokensBlacklistCollection.countDocuments()) === 0;
+        await TokensModel.deleteMany({});
+        return (await TokensModel.countDocuments()) === 0;
     },
 };

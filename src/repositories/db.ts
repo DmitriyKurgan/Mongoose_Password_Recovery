@@ -1,14 +1,11 @@
 import { MongoClient } from 'mongodb';
 import dotenv from 'dotenv'
+import * as mongoose from "mongoose";
 import {
-    BLogType,
-    CommentType,
-    DeviceType,
-    MongoRefreshTokenType,
-    PostType, RateLimitType,
-    RequestType,
-    UserDBType
-} from "../utils/types";
+    AttemptsSchema,
+    BlogsSchema, CommentsSchema,
+    PostsSchema, RecoveryCodeSchema, TokensSchema, UsersSchema, UsersSessionSchema,
+} from "../utils/mongooseShema";
 dotenv.config()
 const mongoURI = process.env.MONGO_URL || "mongodb+srv://dimas:jcm9I93KGt526fpO@blogsplatform.mxifx0s.mongodb.net/?retryWrites=true&w=majority&appName=BlogsPlatform"
 console.log('mongoURI: ', mongoURI)
@@ -16,18 +13,20 @@ if (!mongoURI){
     throw new Error('Database url is not defined!')
 }
 export const client = new MongoClient(mongoURI);
-export const blogsCollection =  client.db('learning').collection<BLogType>('blogs')
-export const postsCollection =  client.db('learning').collection<PostType>('posts')
-export const usersCollection =  client.db('learning').collection<UserDBType>('users')
-export const commentsCollection =  client.db('learning').collection<CommentType>('comments')
-export const devicesCollection =  client.db('learning').collection<DeviceType>('devices')
-export const requestsCollection = client.db('learning').collection<RequestType>('requests');
-export const rateLimitsCollection = client.db('learning').collection<RateLimitType>('rate-limits');
-export const refreshTokensBlacklistCollection =  client.db('learning').collection<MongoRefreshTokenType>("refresh-tokens-blacklist");
+
+export const BlogModel = mongoose.model('blogs', BlogsSchema);
+export const PostsModel = mongoose.model('posts', PostsSchema)
+export const CommentsModel = mongoose.model('comments', CommentsSchema)
+export const UsersModel = mongoose.model('users', UsersSchema)
+export const TokensModel = mongoose.model('refresh-tokens-blacklist', TokensSchema)
+export const UsersSessionModel = mongoose.model('usersSession', UsersSessionSchema)
+export const AttemptsModel = mongoose.model('attempts', AttemptsSchema)
+export const RecoveryCodeModel = mongoose.model('recoveryCode', RecoveryCodeSchema)
+// export const LikesStatusModel = mongoose.model('likesStatus', LikeStatusSchema)
+
 export async function runDB (){
     try {
-        await client.connect();
-        await client.db('learning').command({ping:1});
+        await mongoose.connect(mongoURI, {dbName: 'learning'})
         console.log('Successfully connected to server');
     } catch (error) {
         console.log(error)

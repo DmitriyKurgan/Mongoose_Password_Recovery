@@ -4,9 +4,9 @@ import {CodeResponsesEnum} from "../utils/utils";
 import {
     authMiddleware, requestAttemptsMiddleware,
     validateAuthorization,
-    validateAuthRequests,
+    validateAuthRequests, validateEmail,
     validateEmailResendingRequests,
-    validateErrorsMiddleware,
+    validateErrorsMiddleware, validateNewPassword,
     validateRegistrationConfirmationRequests,
     validateUsersRequests,
     validationEmailConfirm,
@@ -144,3 +144,25 @@ authRouter.delete("/tokens",validateAuthorization, async (req: Request, res: Res
         res.sendStatus(404);
     }
 });
+
+authRouter.post('/password-recovery',
+    validateEmail,
+    requestAttemptsMiddleware,
+    validateErrorsMiddleware,
+    async (req: Request, res: Response) => {
+        const email = req.body.email
+        await authService.findUserByEmailAndSendHimLetter(email)
+        res.sendStatus(CodeResponsesEnum.Not_content_204);
+});
+
+authRouter.post('/new-password',
+    validateNewPassword,
+    requestAttemptsMiddleware,
+    validateErrorsMiddleware,
+    async (req: Request, res: Response) => {
+        const {newPassword, recoveryCode} = req.body
+
+        await usersService.findUserRecoveryCodeAndChangeNewPassword(newPassword, recoveryCode)
+
+        res.sendStatus(204)
+    });

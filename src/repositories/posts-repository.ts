@@ -1,6 +1,6 @@
-import {postsCollection} from "../repositories/db";
-import {ObjectId, WithId, InsertOneResult, UpdateResult, DeleteResult} from "mongodb";
+import {ObjectId, WithId, UpdateResult, DeleteResult} from "mongodb";
 import {OutputPostType, PostType} from "../utils/types";
+import {PostsModel} from "./db";
 export const posts = [] as PostType[]
 
 export const PostMapper = (post : WithId<PostType>) : OutputPostType => {
@@ -17,13 +17,12 @@ export const PostMapper = (post : WithId<PostType>) : OutputPostType => {
 
 export const postsRepository = {
    async createPost(newPost:PostType):Promise<OutputPostType | null> {
-       const result:InsertOneResult<PostType> = await postsCollection.insertOne(newPost)
-       const post = await postsCollection.findOne({_id:result.insertedId})
+       const _id = await PostsModel.create(newPost)
+       const post: WithId<PostType> | null = await PostsModel.findOne({_id})
        return post ? PostMapper(post) : null
-
     },
    async updatePost(postID:string, body:PostType): Promise<boolean> {
-        const result: UpdateResult<PostType> = await postsCollection.updateOne({_id: new ObjectId(postID)},
+        const result: UpdateResult<PostType> = await PostsModel.updateOne({_id: new ObjectId(postID)},
             {$set: {
                     title: body.title,
                     shortDescription: body.shortDescription,
@@ -34,7 +33,7 @@ export const postsRepository = {
     },
    async deletePost(postID:string){
 
-        const result: DeleteResult = await postsCollection.deleteOne({_id: new ObjectId(postID)})
+        const result: DeleteResult = await PostsModel.deleteOne({_id: new ObjectId(postID)})
 
        return result.deletedCount === 1
     }

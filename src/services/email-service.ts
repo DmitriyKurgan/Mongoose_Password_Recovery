@@ -1,5 +1,6 @@
-import {OutputUserType } from "../utils/types";
+import {OutputUserType, RecoveryCodeType} from "../utils/types";
 import {emailManager} from "../managers/email-manager";
+
 export const users = [] as OutputUserType[]
 
 export const emailService:any = {
@@ -15,4 +16,11 @@ export const emailService:any = {
             console.error(error);
         }
     },
+    async sendEmailRecovery(recoveryCode: RecoveryCodeType): Promise<void>{
+        const message = `<h1>Password recovery</h1>
+       <p>To finish password recovery please follow the link below:
+          <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode.recoveryCode}'>recovery password</a>
+      </p>`
+        await emailManager.sendEmail(recoveryCode.email, message)
+    }
 }

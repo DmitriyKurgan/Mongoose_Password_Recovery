@@ -1,8 +1,8 @@
 import {PostMapper} from "../repositories/query-repositories/posts-query-repository";
 import {BLogMapper} from "../repositories/query-repositories/blogs-query-repository";
-import {BLogType, CommentType, PostType, UserType} from "./types";
+import {BLogType, CommentType, PostType, UserDBType, UserType} from "./types";
 import {WithId} from "mongodb";
-import {blogsCollection, commentsCollection, postsCollection, usersCollection} from "../repositories/db";
+import {BlogModel, CommentsModel, PostsModel, UsersModel} from "../repositories/db";
 import {UserSimpleMapper} from "../repositories/query-repositories/users-query-repository";
 import {CommentMapper} from "../repositories/query-repositories/comments-query-repository";
 
@@ -56,14 +56,14 @@ export const getPostsFromDB = async (query:any, blogID?:string) => {
     };
 
     try {
-        const items = await postsCollection
+        const items: WithId<PostType>[] = await PostsModel
             .find(filter)
             .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(query.pageSize)
-            .toArray();
+            .lean();
 
-        const totalCount = await postsCollection.countDocuments(filter);
+        const totalCount = await PostsModel.countDocuments(filter);
         return {
             pagesCount: Math.ceil(totalCount / query.pageSize),
             page: query.pageNumber,
@@ -88,14 +88,14 @@ export const getCommentsFromDB = async (query:any, postID?:string) => {
     };
 
     try {
-        const items = await commentsCollection
+        const items: WithId<CommentType>[] = await CommentsModel
             .find(filter)
             .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(query.pageSize)
-            .toArray();
+            .lean();
 
-        const totalCount = await commentsCollection.countDocuments(filter);
+        const totalCount = await CommentsModel.countDocuments(filter);
         return {
             pagesCount: Math.ceil(totalCount / query.pageSize),
             page: query.pageNumber,
@@ -117,22 +117,22 @@ export const getBlogsFromDB = async (query:any) => {
     const filter = {
         ...search,
     };
-
     try {
-        const items = await blogsCollection
+        const items: WithId<BLogType>[] = await BlogModel
             .find(filter)
             .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(query.pageSize)
-            .toArray();
+            .lean();
 
-        const totalCount = await blogsCollection.countDocuments(filter);
+        const totalCount = await BlogModel.countDocuments(filter);
+
         return {
             pagesCount: Math.ceil(totalCount / query.pageSize),
             page: query.pageNumber,
             pageSize: query.pageSize,
             totalCount,
-            items: items.map((blog:WithId<BLogType>) => BLogMapper(blog)),
+            items: items.map((blog: WithId<BLogType>) => BLogMapper(blog)),
         };
     } catch (e) {
         console.log(e);
@@ -153,14 +153,14 @@ export const getUsersFromDB = async (query:any) => {
     };
 
     try {
-        const items = await usersCollection
+        const items: UserDBType[] = await UsersModel
             .find(filter)
             .sort({ [query.sortBy]: query.sortDirection === 'asc' ? 1 : -1 })
             .skip((query.pageNumber - 1) * query.pageSize)
             .limit(query.pageSize)
-            .toArray();
+            .lean();
 
-        const totalCount = await usersCollection.countDocuments(filter);
+        const totalCount = await UsersModel.countDocuments(filter);
         return {
             pagesCount: Math.ceil(totalCount / query.pageSize),
             page: query.pageNumber,

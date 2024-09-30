@@ -140,6 +140,32 @@ export const validateUsersRequests = [
         .withMessage("Email must be in correct format")
 ];
 
+export const validateEmail = [
+    body("email")
+        .exists()
+        .withMessage("Email is required")
+        .isString()
+        .withMessage("Type of email must be string")
+        .trim()
+        .matches(emailpattern)
+        .withMessage("Email must be in correct format"),
+];
+
+export const validateNewPassword = [
+    body("newPassword")
+        .exists()
+        .withMessage("Password is required")
+        .isString()
+        .withMessage("Type of Password must be string")
+        .trim(),
+    body("recoveryCode")
+        .exists()
+        .withMessage("RecoveryCode is required")
+        .isString()
+        .withMessage("RecoveryCode must be string")
+        .trim()
+];
+
 
 export const validateAuthRequests = [
     body("loginOrEmail")

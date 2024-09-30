@@ -35,7 +35,6 @@ export type UserDBType = {
 export type AccountDataType = {
     userName: string
     email: string
-    passwordSalt: string
     passwordHash: string
     createdAt: Date | string
 }
@@ -59,17 +58,12 @@ export type CommentType = {
     createdAt:string
 }
 
-export type RequestType = {
-    IP:string
-    URL:string
-    date:Date
-}
-
 export type DeviceType = {
     ip: string
     title: string
     lastActiveDate: string | number
     deviceId: string
+    userId: string
 }
 
 export type RateLimitType = {
@@ -108,4 +102,23 @@ export type EazeUserType = {
 
 export type MongoRefreshTokenType = {
     refreshToken: string;
+};
+
+export type RecoveryCodeType = {
+    email: string
+    recoveryCode: string
+}
+
+export enum LikeStatusEnum  {
+    Like = 'Like',
+    Dislike = 'Dislike',
+    None = 'None'
+};
+
+export type LikeStatusType = {
+    parentId: string;
+    userId: string;
+    login: string;
+    likeStatus: LikeStatusEnum;
+    addedAt: Date;
 };

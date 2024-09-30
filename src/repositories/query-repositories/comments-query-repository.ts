@@ -1,7 +1,7 @@
 import {CommentType, OutputCommentType} from "../../utils/types";
 import {ObjectId, WithId} from "mongodb";
 import {getCommentsFromDB} from "../../utils/utils";
-import {commentsCollection} from "../db";
+import {CommentsModel} from "../db";
 
 export const CommentMapper = (comment : WithId<CommentType>) : OutputCommentType => {
     return {
@@ -20,7 +20,7 @@ export const commentsQueryRepository = {
         return getCommentsFromDB(query, postID)
     },
     async findCommentByID(commentID:string){
-        const comment = await commentsCollection.findOne({_id: new ObjectId(commentID)})
+        const comment = await CommentsModel.findOne({_id: new ObjectId(commentID)})
         return comment ? CommentMapper(comment) : null
     }
 }

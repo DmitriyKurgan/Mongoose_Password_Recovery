@@ -1,4 +1,4 @@
-import {devicesCollection} from "./db";
+import {UsersSessionModel} from "./db";
 import {DeleteResult, WithId} from "mongodb";
 import {DeviceType, } from "../utils/types";
 import {ExtendedSessionType} from "../services/devices-service";
@@ -8,7 +8,7 @@ export const devices = [] as DeviceType[]
 export const devicesRepository = {
 
     async createDevice(session:ExtendedSessionType){
-        return devicesCollection.insertOne(session);
+        return UsersSessionModel.create(session);
     },
 
     async updateDevice(
@@ -16,7 +16,7 @@ export const devicesRepository = {
         deviceId: string,
         issuedAt: number
     ){
-        const result = await devicesCollection.updateOne(
+        const result: any = await UsersSessionModel.updateOne(
             { deviceId },
             {
                 $set: {
@@ -28,14 +28,14 @@ export const devicesRepository = {
         return result.matchedCount === 1;
     },
    async deleteDevice(deviceID:string){
-       const result: DeleteResult = await devicesCollection.deleteOne({deviceId: deviceID});
+       const result: DeleteResult = await UsersSessionModel.deleteOne({deviceId: deviceID});
        return result.deletedCount === 1;
     },
     async deleteAllOldDevices(currentDeviceID:string){
-        return devicesCollection.deleteMany({deviceId: {$ne: currentDeviceID}});
+        return UsersSessionModel.deleteMany({deviceId: {$ne: currentDeviceID}});
     },
     async findDeviceById(deviceID:string){
-        const result: WithId<DeviceType> | null = await devicesCollection.findOne({deviceId:deviceID});
+        const result: WithId<DeviceType> | null = await UsersSessionModel.findOne({deviceId:deviceID});
         return result
     }
 }

@@ -1,7 +1,7 @@
 import {EazeUserType, OutputUserType, UserDBType} from "../../utils/types";
 import {ObjectId, WithId} from "mongodb";
 import {getUsersFromDB} from "../../utils/utils";
-import {usersCollection} from "../db";
+import {UsersModel} from "../db";
 
 export const UserMapper = (user : WithId<UserDBType>) : OutputUserType => {
     return {
@@ -24,11 +24,12 @@ export const usersQueryRepository = {
         return getUsersFromDB(query);
     },
     async findByLoginOrEmail(loginOrEmail:string){
-        const user = await usersCollection.findOne({$or: [{"accountData.userName":loginOrEmail}, {"accountData.email":loginOrEmail}]})
-        return user ? UserSimpleMapper(user) : null
+        const user = await UsersModel.findOne({$or: [{"accountData.userName":loginOrEmail}, {"accountData.email":loginOrEmail}]})
+        return user
 },
     async findUserByID(userID:string){
-        const user = await usersCollection.findOne({_id: new ObjectId(userID)})
+        const user = await UsersModel.findOne({_id: new ObjectId(userID)})
         return user ? UserSimpleMapper(user) : null
     }
 }
+

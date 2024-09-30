@@ -1,4 +1,4 @@
-import {OutputUserType, TokenType, UserType} from "../utils/types";
+import {OutputUserType, RecoveryCodeType, TokenType, UserType} from "../utils/types";
 import bcrypt from 'bcrypt'
 import {authRepository} from "../repositories/auth-repository";
 import {authQueryRepository} from "../repositories/query-repositories/auth-query-repository";
@@ -64,6 +64,22 @@ export const authService:any = {
             userAccount,
             newConfirmationCode
         );
-    }
+    },
+    async findUserByEmailAndSendHimLetter(email: string): Promise<void> {
+
+        const recoveryCode: RecoveryCodeType = {
+            email: email,
+            recoveryCode: randomUUID()
+        }
+
+        await authRepository.addRecoveryUserCode(recoveryCode)
+
+        try {
+           await emailService.sendEmailRecovery(recoveryCode)
+        } catch (error) {
+            console.log(error)
+            return
+        }
+    },
 
 }

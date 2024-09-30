@@ -1,5 +1,5 @@
-import {blogsCollection} from "../repositories/db";
-import {InsertOneResult, ObjectId, UpdateResult, DeleteResult} from "mongodb";
+import {BlogModel} from "../repositories/db";
+import { ObjectId, UpdateResult, WithId} from "mongodb";
 import {BLogType, OutputBlogType} from "../utils/types";
 import {BLogMapper} from "./query-repositories/blogs-query-repository";
 export const blogs = [] as BLogType[]
@@ -7,12 +7,12 @@ export const blogs = [] as BLogType[]
 
 export const blogsRepository = {
     async createBlog(newBlog:BLogType):Promise<OutputBlogType | null> {
-        const result:InsertOneResult<BLogType> = await blogsCollection.insertOne(newBlog);
-        const blog = await blogsCollection.findOne({_id: result.insertedId});
+        const _id = await BlogModel.create(newBlog);
+        const blog: WithId<BLogType> | null = await BlogModel.findOne({_id});
         return blog ? BLogMapper(blog) : null;
     },
     async updateBlog(blogID:string, body:BLogType):Promise<boolean> {
-        const result: UpdateResult<BLogType>= await blogsCollection.updateOne({_id: new ObjectId(blogID)},
+        const result: UpdateResult<BLogType>= await BlogModel.updateOne({_id: new ObjectId(blogID)},
             {$set:{name: body.name,
             description: body.description,
             websiteUrl: body.websiteUrl
@@ -21,7 +21,7 @@ export const blogsRepository = {
         return result.matchedCount === 1;
     },
    async deleteBlog(blogID:string): Promise<boolean>{
-        const result: DeleteResult = await blogsCollection.deleteOne({_id:new ObjectId(blogID)});
-        return result.deletedCount === 1
+       const result: any = await BlogModel.deleteOne({_id: new ObjectId(blogID)});
+       return result.deletedCount === 1
     }
 }
