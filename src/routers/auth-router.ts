@@ -162,7 +162,13 @@ authRouter.post('/new-password',
     async (req: Request, res: Response) => {
         const {newPassword, recoveryCode} = req.body
 
-        await usersService.findUserRecoveryCodeAndChangeNewPassword(newPassword, recoveryCode)
+        const result = await usersService.findUserRecoveryCodeAndChangeNewPassword(newPassword, recoveryCode)
 
+        if (!result) return res.status(400).send({
+            errorsMessages: [{
+                message: "Error",
+                field: "recoveryCode"
+            }]
+        })
         res.sendStatus(204)
     });

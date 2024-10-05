@@ -51,32 +51,12 @@ export const usersService:any = {
         return hash
     },
 
-    async findUserRecoveryCodeAndChangeNewPassword(newPassword:string, recoveryCode:string):Promise<void> {
+    async findUserRecoveryCodeAndChangeNewPassword(newPassword:string, recoveryCode:string):Promise<any> {
         const userCode = await usersRepository.findUserByRecoveryCode(recoveryCode);
         if (!userCode) return
         const passwordSalt = await bcrypt.genSalt(10)
         const hash = await this._generateHash(newPassword, passwordSalt)
-        await usersRepository.updateUserPassword(userCode.email, hash)
-
-
-      //
-      //   const recoveryCode: RecoveryCodeType = {
-      //       email: email,
-      //       recoveryCode: uuidv4()
-      //   }
-      //   const result = await this.usersRepository.addRecoveryUserCode(recoveryCode)
-      //   try {
-      //       const message = `<h1>Password recovery</h1>
-      //  <p>To finish password recovery please follow the link below:
-      //     <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode.recoveryCode}'>recovery password</a>
-      // </p>`
-      //       await emailService.sendEmail(email, "recovery code", message)
-      //   } catch (error) {
-      //       console.log(error)
-      //       return null
-      //   }
-      //   return result
-
-
+        const result = await usersRepository.updateUserPassword(userCode.email, hash)
+        return result
     }
 }
