@@ -149,7 +149,7 @@ export const validateEmail = [
         .trim()
         .matches(emailpattern)
         .withMessage("Email must be in correct format"),
-];
+] as any;
 
 export const validateNewPassword = [
     body("newPassword")
@@ -157,14 +157,21 @@ export const validateNewPassword = [
         .withMessage("Password is required")
         .isString()
         .withMessage("Type of Password must be string")
-        .trim(),
+        .trim()
+        .isLength({
+            min: 6,
+            max: 20,
+        })
+        .withMessage(
+            "Password length must be more than 0 and less than or equal to 100 symbols"
+        ),
     body("recoveryCode")
         .exists()
         .withMessage("RecoveryCode is required")
         .isString()
         .withMessage("RecoveryCode must be string")
         .trim()
-];
+] as any;
 
 
 export const validateAuthRequests = [

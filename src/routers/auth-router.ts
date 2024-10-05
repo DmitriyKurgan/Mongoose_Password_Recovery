@@ -146,8 +146,8 @@ authRouter.delete("/tokens",validateAuthorization, async (req: Request, res: Res
 });
 
 authRouter.post('/password-recovery',
-    validateEmail,
     requestAttemptsMiddleware,
+    validateEmail,
     validateErrorsMiddleware,
     async (req: Request, res: Response) => {
         const email = req.body.email
@@ -156,8 +156,8 @@ authRouter.post('/password-recovery',
 });
 
 authRouter.post('/new-password',
-    validateNewPassword,
     requestAttemptsMiddleware,
+    validateNewPassword,
     validateErrorsMiddleware,
     async (req: Request, res: Response) => {
         const {newPassword, recoveryCode} = req.body
