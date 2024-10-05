@@ -13,7 +13,7 @@ export const authRepository = {
             {$set:{'emailConfirmation.confirmationCode':confirmationCode}});
         return result.matchedCount === 1
     },
-    async addRecoveryUserCode(recoveryCode:RecoveryCodeType):Promise<void>{
-        await RecoveryCodeModel.create(recoveryCode)
+    async addRecoveryUserCode(recoveryCode:RecoveryCodeType):Promise<any> {
+       return await RecoveryCodeModel.create(recoveryCode)
     }
 }

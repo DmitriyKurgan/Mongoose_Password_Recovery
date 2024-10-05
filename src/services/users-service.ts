@@ -57,5 +57,26 @@ export const usersService:any = {
         const passwordSalt = await bcrypt.genSalt(10)
         const hash = await this._generateHash(newPassword, passwordSalt)
         await usersRepository.updateUserPassword(userCode.email, hash)
+
+
+      //
+      //   const recoveryCode: RecoveryCodeType = {
+      //       email: email,
+      //       recoveryCode: uuidv4()
+      //   }
+      //   const result = await this.usersRepository.addRecoveryUserCode(recoveryCode)
+      //   try {
+      //       const message = `<h1>Password recovery</h1>
+      //  <p>To finish password recovery please follow the link below:
+      //     <a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode.recoveryCode}'>recovery password</a>
+      // </p>`
+      //       await emailService.sendEmail(email, "recovery code", message)
+      //   } catch (error) {
+      //       console.log(error)
+      //       return null
+      //   }
+      //   return result
+
+
     }
 }

@@ -65,21 +65,23 @@ export const authService:any = {
             newConfirmationCode
         );
     },
-    async findUserByEmailAndSendHimLetter(email: string): Promise<void> {
+    async findUserByEmailAndSendHimLetter(email: string): Promise<any> {
 
         const recoveryCode: RecoveryCodeType = {
             email: email,
             recoveryCode: randomUUID()
         }
 
-        await authRepository.addRecoveryUserCode(recoveryCode)
+        const result = await authRepository.addRecoveryUserCode(recoveryCode)
 
         try {
            await emailService.sendEmailRecovery(recoveryCode)
         } catch (error) {
             console.log(error)
-            return
+            return null
         }
+
+        return result
     },
 
 }
